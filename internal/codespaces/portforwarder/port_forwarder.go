@@ -17,6 +17,14 @@ const (
 	UserForwardedPortLabel = "UserForwardedPort"
 )
 
+// convertIntToUint16 safely converts an int to uint16, returning an error if out of range.
+func convertIntToUint16(port int) (uint16, error) {
+	if port < 0 || port > 65535 {
+		return 0, fmt.Errorf("port number %d out of range (0-65535)", port)
+	}
+	return uint16(port), nil
+}
+
 const (
 	PrivatePortVisibility = "private"
 	OrgPortVisibility     = "org"
@@ -264,7 +272,11 @@ func (fwd *CodespacesPortForwarder) UpdatePortVisibility(ctx context.Context, re
 	}
 
 	// Delete the existing tunnel port to update
-	err = fwd.connection.TunnelManager.DeleteTunnelPort(ctx, fwd.connection.Tunnel, uint16(remotePort), fwd.connection.Options)
+	port16, err := convertIntToUint16(remotePort)
+	if err != nil {
+		return fmt.Errorf("invalid port number: %w", err)
+	}
+	err = fwd.connection.TunnelManager.DeleteTunnelPort(ctx, fwd.connection.Tunnel, port16, fwd.connection.Options)
 	if err != nil {
 		return fmt.Errorf("error deleting tunnel port: %w", err)
 	}
