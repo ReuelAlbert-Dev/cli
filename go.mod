@@ -51,6 +51,7 @@ require (
 	github.com/spf13/pflag v1.0.7
 	github.com/stretchr/testify v1.11.0
 	github.com/theupdateframework/go-tuf/v2 v2.1.1
+	github.com/vmihailenco/msgpack/v5 v5.4.1
 	github.com/yuin/goldmark v1.7.13
 	github.com/zalando/go-keyring v0.2.6
 	golang.org/x/crypto v0.41.0
@@ -205,6 +206,7 @@ require (
 	github.com/transparency-dev/merkle v0.0.2 // indirect
 	github.com/transparency-dev/tessera v0.2.1-0.20250610150926-8ee4e93b2823 // indirect
 	github.com/vbatts/tar-split v0.12.1 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yuin/goldmark-emoji v1.0.6 // indirect
 	github.com/zeebo/errs v1.4.0 // indirect
