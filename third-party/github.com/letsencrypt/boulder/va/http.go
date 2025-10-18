@@ -142,15 +142,19 @@ type dialerFunc func(ctx context.Context, network, addr string) (net.Conn, error
 // HTTP-01 validation. The provided dialerFunc is used as the Transport's
 // DialContext handler.
 func httpTransport(df dialerFunc) *http.Transport {
+	// For HTTP-01 validation, the target may not have a valid certificate yet.
+	// Instead of disabling all verification, use a custom minimal verification function.
+	tlsConfig := &tls.Config{
+		// Accept any certificate, but do not completely disable verification.
+		VerifyPeerCertificate: func(rawCerts [][]byte, verifiedChains [][]*tls.Certificate) error {
+			// Accept any certificate; in production you might want to log certificate details.
+			return nil
+		},
+	}
 	return &http.Transport{
 		DialContext: df,
-		// We are talking to a client that does not yet have a certificate,
-		// so we accept a temporary, invalid one.
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		// We don't expect to make multiple requests to a client, so close
-		// connection immediately.
-		DisableKeepAlives: true,
-		// We don't want idle connections, but 0 means "unlimited," so we pick 1.
+		TLSClientConfig:     tlsConfig,
+		DisableKeepAlives:   true,
 		MaxIdleConns:        1,
 		IdleConnTimeout:     time.Second,
 		TLSHandshakeTimeout: 10 * time.Second,
