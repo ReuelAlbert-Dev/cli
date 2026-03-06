@@ -94,12 +94,16 @@ var issueClosedByPullRequestsReferences = shortenQuery(`
 	}
 `)
 
+// prReviewRequests includes ...on Bot to support Copilot as a reviewer on github.com.
+// On GHES, Bot is not part of the RequestedReviewer union, but the fragment is
+// silently ignored (verified on GHES 3.19).
 var prReviewRequests = shortenQuery(`
 	reviewRequests(first: 100) {
 		nodes {
 			requestedReviewer {
 				__typename,
-				...on User{login},
+				...on User{login,name},
+				...on Bot{login},
 				...on Team{
 					organization{login}
 					name,
